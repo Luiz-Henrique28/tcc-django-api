@@ -1,0 +1,64 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django-app
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=tcc_catalog
+      - DATABASE_USER=tcc_user
+      - DATABASE_PASSWORD=tcc_password
+      - DJANGO_SECRET_KEY=tcc-secret-key-for-development-only
+      - DJANGO_DEBUG=True
+    networks:
+      - django-network
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: django-nginx
+    restart: unless-stopped
+    ports:
+      - "8002:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./staticfiles:/app/staticfiles
+    depends_on:
+      - app
+    networks:
+      - django-network
+
+  db:
+    image: postgres:14-alpine
+    container_name: django-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tcc_catalog
+      POSTGRES_USER: tcc_user
+      POSTGRES_PASSWORD: tcc_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tcc_user -d tcc_catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - django-network
+
+volumes:
+  pgdata:
+
+networks:
+  django-network:
+    driver: bridge

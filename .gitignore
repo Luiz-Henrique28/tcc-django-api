@@ -1,0 +1,28 @@
+# .gitignore for Django project
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+db.sqlite3
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Docker volumes
+pgdata/
+
+# Static files (generated)
+staticfiles/
+
+# OS
+.DS_Store
+Thumbs.db
