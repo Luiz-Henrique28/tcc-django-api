@@ -148,7 +148,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     GET: público (com JOIN na categoria) | POST/PUT/DELETE: autenticado.
     Filtro por categoria via query param: ?category=<id>
     """
-    queryset = Product.objects.select_related('categoria').all()
+    queryset = Product.objects.select_related('categoria').all().order_by('-id')
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
