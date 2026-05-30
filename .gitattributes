@@ -1,0 +1,10 @@
+# Normaliza todas as quebras de linha para LF ao commitar (evita ruído CRLF do Windows)
+* text=auto eol=lf
+
+# Arquivos binários — não converter
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
